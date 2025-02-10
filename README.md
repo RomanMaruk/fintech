@@ -13,3 +13,7 @@ wsUrl: 'wss://platform.fintacharts.com',
 username: '{{your_username}}',
 password: '{{your_password}}'
 };
+
+## Auth service 
+
+As login mehtod return error with CORS temprory you shold pass response from Postman

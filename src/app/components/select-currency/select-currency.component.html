@@ -1,5 +1,7 @@
-<select name="curency" id="curency">
-  <option value="usd">usd</option>
-  <option value="usd">usd</option>
-  <option value="usd">usd</option>
+<select name="curency" id="curency" [formControl]="form">
+  @for (instrument of (listInsrument$ | async); track instrument.id) {
+  <option [ngValue]="instrument">
+    {{ instrument.symbol }}
+  </option>
+  }
 </select>

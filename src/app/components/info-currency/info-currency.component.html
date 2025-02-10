@@ -1,5 +1,5 @@
 <div class="wrap">
-  <p>Currency: USD</p>
+  <p>Currency: {{ (selectedInstrument$ | async)?.symbol }}</p>
   <p>Price: {{ (infoCurrency$ | async)?.price }}</p>
   <p>Date: {{ (infoCurrency$ | async)?.date | date : "yyyy-MM-dd" }}</p>
 </div>
