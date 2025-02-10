@@ -1,10 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { AuthService } from './services/api/auth.service';
-import { WebSocketService } from './services/web-socket.service';
 import { take } from 'rxjs';
-import { BarsService } from './services/api/bars.service';
-import { InstrumentsService } from './services/api/instruments.service';
+import { AuthService } from './services/api/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -15,9 +12,6 @@ import { InstrumentsService } from './services/api/instruments.service';
 })
 export class AppComponent {
   private auth = inject(AuthService);
-  private bars = inject(BarsService);
-  private instrument = inject(InstrumentsService);
-  private wsService = inject(WebSocketService);
 
   ngOnInit() {
     this.auth
@@ -26,9 +20,5 @@ export class AppComponent {
       .subscribe((r) => {
         this.auth.setToken = r.access_token;
       });
-
-    this.instrument.getInstruments().subscribe((res) => {
-      console.log(res);
-    });
   }
 }

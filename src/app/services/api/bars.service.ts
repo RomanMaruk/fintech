@@ -17,7 +17,7 @@ export class BarsService {
 
   constructor(private http: HttpClient) {}
 
-  getBars({
+  getBarsCountBack({
     instrumentId,
     provider,
     interval,
