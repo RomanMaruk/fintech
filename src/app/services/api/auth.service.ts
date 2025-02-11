@@ -32,7 +32,7 @@ export class AuthService {
   }
 
   relogin() {
-    this.subject.next('');
+    this.subject.next('w');
   }
 
   login(): Observable<IAuth | null> {

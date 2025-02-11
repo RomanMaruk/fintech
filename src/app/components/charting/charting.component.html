@@ -1,16 +1,12 @@
-@for (bar of barsData$ | async; track $index) {
-<!-- <p>{{ bar.t | date : "yyyy-MM-dd" }}</?p> -->
-<!-- <p>{{ bar.c }}</p> -->
-}
-
-<!-- [data]="barChartData" -->
-<canvas
-  baseChart
-  [options]="barChartOptions"
-  [type]="'line'"
-  [width]="800"
-  [height]="400"
-  [labels]="labels"
-  [datasets]="datasChart"
->
-</canvas>
+<div class="wrap" [ngClass]="{ blur: !!!(barsData$ | async) }">
+  <canvas
+    baseChart
+    [options]="barChartOptions"
+    [type]="'line'"
+    [width]="800"
+    [height]="400"
+    [labels]="labels"
+    [datasets]="datasChart"
+  >
+  </canvas>
+</div>

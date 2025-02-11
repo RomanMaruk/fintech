@@ -1,8 +1,8 @@
-import { AsyncPipe, DatePipe } from '@angular/common';
+import { AsyncPipe, DatePipe, NgClass } from '@angular/common';
 import { Component, inject, viewChild } from '@angular/core';
 import { ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
-import { Observable, filter, map, switchMap } from 'rxjs';
+import { Observable, filter, map, switchMap, tap } from 'rxjs';
 import { IDataRange, IRange } from '../../models/bars.interface';
 import { IListInstrument } from '../../models/instrument.interface';
 import { BarsService } from '../../services/api/bars.service';
@@ -12,11 +12,13 @@ import { IAsk, WebSocketService } from '../../services/web-socket.service';
 @Component({
   selector: 'app-charting',
   standalone: true,
-  imports: [BaseChartDirective, AsyncPipe],
+  imports: [BaseChartDirective, AsyncPipe, NgClass],
   templateUrl: './charting.component.html',
   styleUrl: './charting.component.scss',
 })
 export class ChartingComponent {
+  private wsService = inject(WebSocketService);
+
   private chart = viewChild(BaseChartDirective);
 
   public labels: string[] = [];
@@ -51,32 +53,19 @@ export class ChartingComponent {
           instrumentId: list.id,
         })
         .pipe(
-          map((r: IDataRange) => {
-            const data = r.data;
-            const label = data.map((d) =>
-              new DatePipe('en-US').transform(d.t, 'yyyy-MM-dd')
-            ) as string[];
-            const datasChart = data.map((d) => d.c);
-            this.datasChart[0].data = datasChart;
-            this.labels = label;
-
-            return data;
+          map((r: IDataRange) => this.updateBarData(r)),
+          tap(() => {
+            const isConnected = this.wsService.checkWebSocketConnection();
+            if (isConnected) {
+              this.wsService.subscribeToMarketData(list.id);
+            }
           })
         );
     })
   );
 
-  private wsService = inject(WebSocketService);
-
   ngOnInit() {
-    this.wsService.connect()
-
-    this.stateCurrency$.subscribe((res) => {
-      const isConnected = this.wsService.checkWebSocketConnection();
-      if (res && isConnected) {
-        this.wsService.subscribeToMarketData(res.id);
-      }
-    });
+    this.wsService.connect();
 
     this.wsService.messages$.subscribe((message) => {
       if (message?.ask) {
@@ -92,5 +81,17 @@ export class ChartingComponent {
       this.datasChart[0].data = newArray;
       this.chart()?.update();
     }
+  }
+
+  private updateBarData(r: IDataRange) {
+    const data = r.data;
+    const label = data.map((d) =>
+      new DatePipe('en-US').transform(d.t, 'yyyy-MM-dd')
+    ) as string[];
+    const datasChart = data.map((d) => d.c);
+    this.datasChart[0].data = datasChart;
+    this.labels = label;
+
+    return data;
   }
 }

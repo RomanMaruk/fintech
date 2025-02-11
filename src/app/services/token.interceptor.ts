@@ -20,6 +20,7 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
+        authService.logout();
         errorService.unauthorized();
         authService.relogin();
         return next(req);
