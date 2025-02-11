@@ -5,8 +5,10 @@ import { catchError, throwError } from 'rxjs';
 import { ErrorService } from './error.service';
 
 export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = inject(AuthService).token;
+  const authService = inject(AuthService);
   const errorService = inject(ErrorService);
+
+  const token = authService.token;
 
   if (token) {
     req = req.clone({
@@ -19,8 +21,11 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
         errorService.unauthorized();
+        authService.relogin();
+        return next(req);
       }
 
+      authService.logout();
       return throwError(error);
     })
   );

@@ -7,4 +7,5 @@ export interface IAuth {
   'not-before-policy': number;
   session_state: string;
   scope: string;
+  endTime?: number;
 }

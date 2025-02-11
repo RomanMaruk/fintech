@@ -1,8 +1,7 @@
-import { Injectable, inject } from '@angular/core';
-import { AuthService } from './api/auth.service';
-import { BehaviorSubject, Subject } from 'rxjs';
 import { DatePipe } from '@angular/common';
-import { webSocket } from 'rxjs/webSocket';
+import { Injectable, inject } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { AuthService } from './api/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -73,6 +72,14 @@ export class WebSocketService {
     } else {
       console.error('WebSocket is not initialized');
     }
+  }
+
+  checkWebSocketConnection() {
+    if (this.socket) {
+      const isConnected = this.socket.readyState === WebSocket.OPEN;
+      return isConnected;
+    }
+    return false;
   }
 }
 

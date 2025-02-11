@@ -1,5 +1,5 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, viewChild } from '@angular/core';
+import { Component, inject, viewChild } from '@angular/core';
 import { ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { Observable, filter, map, switchMap } from 'rxjs';
@@ -69,9 +69,11 @@ export class ChartingComponent {
   private wsService = inject(WebSocketService);
 
   ngOnInit() {
-    this.wsService.connect();
+    this.wsService.connect()
+
     this.stateCurrency$.subscribe((res) => {
-      if (res) {
+      const isConnected = this.wsService.checkWebSocketConnection();
+      if (res && isConnected) {
         this.wsService.subscribeToMarketData(res.id);
       }
     });
