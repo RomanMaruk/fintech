@@ -1,4 +1,4 @@
-import { AsyncPipe, DatePipe, NgClass } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import { Component, inject, viewChild } from '@angular/core';
 import { ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
@@ -8,6 +8,7 @@ import { IListInstrument } from '../../models/instrument.interface';
 import { BarsService } from '../../services/api/bars.service';
 import { StateCurrentCurrencyService } from '../../services/state-current-currency.service';
 import { IAsk, WebSocketService } from '../../services/web-socket.service';
+import { transformDateToYMD } from '../../utils/utils';
 
 @Component({
   selector: 'app-charting',
@@ -85,9 +86,7 @@ export class ChartingComponent {
 
   private updateBarData(r: IDataRange) {
     const data = r.data;
-    const label = data.map((d) =>
-      new DatePipe('en-US').transform(d.t, 'yyyy-MM-dd')
-    ) as string[];
+    const label: string[] = data.map((d) => transformDateToYMD(d.t));
     const datasChart = data.map((d) => d.c);
     this.datasChart[0].data = datasChart;
     this.labels = label;

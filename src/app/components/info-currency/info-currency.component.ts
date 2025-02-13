@@ -4,18 +4,17 @@ import { filter, map, shareReplay, switchMap } from 'rxjs';
 import { IListInstrument } from '../../models/instrument.interface';
 import { BarsService } from '../../services/api/bars.service';
 import { StateCurrentCurrencyService } from '../../services/state-current-currency.service';
+import { transformDateToYMD } from '../../utils/utils';
 
 @Component({
   selector: 'app-info-currency',
   standalone: true,
   imports: [AsyncPipe, DatePipe],
-  providers: [DatePipe],
   templateUrl: './info-currency.component.html',
   styleUrl: './info-currency.component.scss',
 })
 export class InfoCurrencyComponent {
   private barsService = inject(BarsService);
-  private datePipe = inject(DatePipe);
   public selectedInstrument$ = inject(
     StateCurrentCurrencyService
   ).currentInstrument$.pipe(shareReplay());
@@ -25,8 +24,8 @@ export class InfoCurrencyComponent {
   getCurrencyInfo() {
     const date = new Date();
     date.setDate(date.getDate() - 1);
-    const startDate = this.datePipe.transform(date, 'yyyy-MM-dd') as string;
-    const endDate = this.datePipe.transform(new Date(), 'yyyy-MM-dd') as string;
+    const startDate = transformDateToYMD(date);
+    const endDate = transformDateToYMD(new Date());
 
     return this.selectedInstrument$.pipe(
       filter(
